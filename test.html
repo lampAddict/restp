@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>TEST</title>
+    <script type="text/javascript" src="static/js/jquery-2.1.0.min.js"></script>
+    <style type="text/css">
+        .block{
+            float: left;
+            width: 100%;
+        }
+        .mtop-20{
+            margin-top: 20px;
+        }
+        .border{
+            border: 1px solid lightgray;
+        }
+        .pad{
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <script type="application/javascript">
+        function sendRequest(req){
+            var udata,result;
+            if( req == 'get_user_rate' ){
+                udata = $('#data').val();
+                result = $('#response');
+            }
+            else{
+                udata = $('#name').val();
+                result = $('#responseMongo');
+            }
+
+            $.ajax({
+                url: 'index.php',
+                method: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ "requestName" : req, "data" :{'user' : udata } }),
+                success: function(resp){ if( resp['data'] && resp['data']['user'] && resp['data']['user'].length > 0 && resp['data']['rates'].length > 0 ) result.text('Пользователь: ' + resp['data']['user'][0]['name'] + ' ' + (resp['data']['rates'].map(function(item){return item['rname']})).join(',')); else result.text('Пользователь: не найден.'); }
+            });
+        }
+        function sendImportRequest(){
+            $.ajax({
+                url: 'index.php',
+                method: 'POST',
+                data: JSON.stringify({ "requestName" : "import_data" }),
+                success: function(resp){ if( resp && resp['data'] )$('#importResult').text(resp['data']['import']); }
+            });
+        }
+    </script>
+    <div class="block border">
+        <div class="block pad">
+            <input id="data" type="text" placeholder="Ид пользователя"/>
+            <input type="button" value="Отправить запрос" onclick="sendRequest('get_user_rate')"/>
+        </div>
+        <div id="response" class="block mtop-20 pad">
+        </div>
+    </div>
+    <div class="block border mtop-20">
+        <div class="block pad">
+            <input type="button" value="Импортировать данные" onclick="sendImportRequest()"/>
+        </div>
+        <div id="importResult" class="block mtop-20 pad">
+        </div>
+    </div>
+    <div class="block border mtop-20">
+        <div class="block pad">
+            <input id="name" type="text" placeholder="Имя mongo пользователя"/>
+            <input type="button" value="Отправить запрос" onclick="sendRequest('get_mongo_user_rate')"/>
+        </div>
+        <div id="responseMongo" class="block mtop-20 pad">
+        </div>
+    </div>
+</body>
+</html>

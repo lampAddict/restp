@@ -1,0 +1,12 @@
+user collection
+{
+    "_id" : id,
+    "name" : name,
+    "rates" : { ["id":_id1, "rname":rname], ["id":_id2, "rname":rname] }
+}
+
+rates collection
+{
+    "_id" : id,
+    "rname" : rname
+}
